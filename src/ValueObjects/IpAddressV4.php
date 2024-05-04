@@ -18,13 +18,7 @@ final readonly class IpAddressV4
 
     public function validate(string $value): void
     {
-        $filtered = !filter_var(
-            value: $value,
-            filter: FILTER_VALIDATE_IP,
-            options: FILTER_FLAG_IPV4,
-        );
-
-        if ($filtered === false) {
+        if (filter_var(value: $value, filter: FILTER_VALIDATE_IP, options: FILTER_FLAG_IPV4) === false) {
             throw new InvalidIpAddressException(message: 'Invalid IP address');
         }
     }

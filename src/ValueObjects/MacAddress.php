@@ -10,51 +10,46 @@ use const FILTER_VALIDATE_MAC;
 
 final readonly class MacAddress
 {
-    private array $chunks;
+    public string $value;
 
     public function __construct(string $value)
     {
         $this->validate(value: $value);
-
-        $this->chunks = mb_str_split(
-            string: str_replace(
-                search: ['-', ':', '.'],
-                replace: '',
-                subject: $value,
-            ),
-            length: 2,
-        );
+        $this->value = $this->sanitize(value: $value);
     }
 
-    public function validate(string $value): void
+    private function sanitize(string $value): string
     {
-        $filtered = filter_var(
-            value: $value,
-            filter: FILTER_VALIDATE_MAC,
-        );
+        $hex = str_replace(search: ['-', ':', '.'], replace: '', subject: $value);
+        $chunks = mb_str_split(string: $hex, length: 2);
 
-        if ($filtered === false) {
+        return implode(separator: ':', array: $chunks);
+    }
+
+    private function validate(string $value): void
+    {
+        if (filter_var(value: $value, filter: FILTER_VALIDATE_MAC) === false) {
             throw new InvalidMacAddressException(message: "Invalid MAC address");
         }
     }
 
+    public function toColonSeparatedHexString(): string
+    {
+        return $this->value;
+    }
+
     public function toHexString(): string
     {
-        return implode(array: $this->chunks);
+        return str_replace(search: ':', replace: '', subject: $this->value);
     }
 
     public function toDashSeparatedHexString(): string
     {
-        return implode(separator: '-', array: $this->chunks);
-    }
-
-    public function toColonSeparatedHexString(): string
-    {
-        return implode(separator: ':', array: $this->chunks);
+        return str_replace(search: ':', replace: '-', subject: $this->value);
     }
 
     public function __toString(): string
     {
-        return $this->toHexString();
+        return $this->toColonSeparatedHexString();
     }
 }

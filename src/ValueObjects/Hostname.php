@@ -12,14 +12,10 @@ use const FILTER_VALIDATE_DOMAIN;
 
 final class Hostname
 {
-    private static HostnameMaxLength $maxLength;
+    private static ?HostnameMaxLength $maxLength = null;
 
     public function __construct(public string $value)
     {
-        if(self::$maxLength === null) {
-            self::setMaxLength(maxLength: HostnameMaxLength::universal());
-        }
-
         $this->validateLength(value: $value);
         $this->validateCharacters(value: $value);
     }
@@ -35,20 +31,16 @@ final class Hostname
 
         if ($length === 0) {
             throw new InvalidHostnameException(message: 'Hostname is empty.');
-        } elseif ($length > self::$maxLength->value) {
+        } elseif (self::$maxLength && $length > self::$maxLength->value) {
             throw new InvalidHostnameException(message: 'Hostname is too long.');
         }
     }
 
     public function validateCharacters(string $value): void
     {
-        $filtered = filter_var(
-            value: $value,
-            filter: FILTER_VALIDATE_DOMAIN,
-            options: FILTER_FLAG_HOSTNAME,
-        );
+        $isSuccess = filter_var(value: $value, filter: FILTER_VALIDATE_DOMAIN, options: FILTER_FLAG_HOSTNAME);
 
-        if ($filtered === false) {
+        if ($isSuccess === false) {
             throw new InvalidHostnameException(message: 'Hostname has an unsupported characters.');
         }
     }
