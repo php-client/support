@@ -6,10 +6,10 @@ namespace PhpClient\Support\ValueObjects;
 
 use PhpClient\Support\Exceptions\InvalidIpAddressException;
 
-use const FILTER_FLAG_IPV4;
+use const FILTER_FLAG_IPV6;
 use const FILTER_VALIDATE_IP;
 
-final readonly class IpAddressV4
+final readonly class IpAddressV6
 {
     public function __construct(public string $value)
     {
@@ -18,8 +18,8 @@ final readonly class IpAddressV4
 
     public function validate(string $value): void
     {
-        if (filter_var(value: $value, filter: FILTER_VALIDATE_IP, options: FILTER_FLAG_IPV4) === false) {
-            throw new InvalidIpAddressException(message: 'Invalid IPv4 address');
+        if (filter_var(value: $value, filter: FILTER_VALIDATE_IP, options: FILTER_FLAG_IPV6) === false) {
+            throw new InvalidIpAddressException(message: 'Invalid IPv6 address');
         }
     }
 
