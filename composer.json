@@ -1,5 +1,5 @@
 {
-  "name": "phpclient/support",
+  "name": "php-client/support",
   "description": "PhpClient Support Library",
   "type": "library",
   "require": {
