@@ -1,6 +1,6 @@
 {
   "name": "php-client/support",
-  "description": "PhpClient Support Library",
+  "description": "PHP Client Support Library",
   "type": "library",
   "require": {
     "php": "^8.3",
